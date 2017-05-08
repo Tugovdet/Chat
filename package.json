@@ -1,0 +1,23 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "description": "learning project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "static ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tugovdet/Chat.git"
+  },
+  "author": "Anton Korneyev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tugovdet/Chat/issues"
+  },
+  "homepage": "https://github.com/Tugovdet/Chat#readme",
+  "devDependencies": {
+    "node-static": "^0.7.9"
+  }
+}
