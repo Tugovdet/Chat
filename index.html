@@ -5,10 +5,30 @@
   <!-- Dependencies -->
   <script src="components/form/form.js"></script>
   <script src="components/chat/chat.js"></script>
-  <script src="components/app/app.js"></script>
+  <!-- <script src="components/app/app.js"></script> -->
 </head>
 <body>
   <div class="js-chat"></div>
   <div class="js-form"></div>
+
+  <script>
+  'use strict';
+
+  const formDiv = document.querySelector('.js-form');
+  const chatDiv = document.querySelector('.js-chat');
+
+  const form = new Form({ el: formDiv });
+  const chat = new Chat({ el: chatDiv, data: { messages: [] } });
+
+  form.render();
+  chat.render();
+
+  form.onSubmit((formData) => {
+    chat.addMessage(formData.message);
+    chat.render();
+    form.render();
+  });
+  
+  </script>
 </body>
 </html>

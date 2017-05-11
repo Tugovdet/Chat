@@ -14,13 +14,13 @@
     }
 
     _initEvents() {
-      this.addEventListener('submit', this._onSubmit, false);
+      this.el.addEventListener('submit', this._onSubmit, false);
     }
 
     _getFormData() {
-      const message = Document.querySelector('textarea');
+      const message = document.querySelector('textarea');
 
-      const formData = { message };
+      const formData = { message: message.value };
 
       return formData;
     }
@@ -29,7 +29,7 @@
       ev.preventDefault();
 
       const formData = this._getFormData();
-      this.onSubmit(formData);
+      this._submitCallback(formData);
     }
 
     render() {

@@ -2,9 +2,13 @@
   'use strict';
 
   class Chat {
-    constructor({ el, data = { messages: [] } }) {
-      this.el = el;
-      this.data = data;
+    constructor(options) {
+      this.el = options.el;
+      this.data = options.data;
+
+      if (this.data.messages === undefined) {
+        this.data.messages = [];
+      }
     }
 
     render() {
