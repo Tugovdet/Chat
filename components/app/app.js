@@ -4,10 +4,10 @@
   class App {
     /**
      * This is the mediator for all components of application
-     * @param {HTMLElement} rootEl - root node for the application
+     * @param {HTMLElement} el - application container
      */
-    constructor(rootEl) {
-      this.rootEl = rootEl;
+    constructor(el) {
+      this.el = el;
       this._createElements();
     }
 
@@ -21,8 +21,8 @@
       this.chatEl = document.createElement('div');
       this.chatEl.classList.add('chat-container');
 
-      this.rootEl.appendChild(this.formEl);
-      this.rootEl.appendChild(this.chatEl);
+      this.el.appendChild(this.formEl);
+      this.el.appendChild(this.chatEl);
     }
 
     /**
@@ -32,6 +32,7 @@
       const form = new Form({ el: this.formEl });
       const chat = new Chat({ el: this.chatEl });
 
+      // TODO: user event
       form.onSubmit((formData) => {
         chat.addMessage(formData);
         chat.render();

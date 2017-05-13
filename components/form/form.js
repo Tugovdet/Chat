@@ -29,9 +29,8 @@
     }
 
     _getFormData() {
-      // TODO: search by names, delete temporary css classes
-      const usernameEl = document.querySelector('[name="username"]');
-      const messageEl = document.querySelector('[name="message"]');
+      const usernameEl = document.querySelector('.form__username');
+      const messageEl = document.querySelector('.form__input');
 
       const formData = { message: messageEl.value, username: usernameEl.value, date: new Date() };
 
@@ -46,16 +45,16 @@
     }
 
     reset() {
-      this.el.querySelector('.form').reset();
+      // TODO: refactoring
+      this.el.querySelector('.form__input').value = '';
     }
 
     render() {
       this.el.innerHTML = `
-        <input class="js-username" name="username" required placeholder="Username" />
+        <input class="form__username" required placeholder="Username" />
         <form class="form">
-          <textarea class="js-message" name="message" required placeholder="Message" rows=4></textarea>
-          <br/>
-          <input type="submit"/>
+          <input class="form__input" required placeholder="Message" />
+          <input type="submit" value="Send" class="form__submit" />
         </form>
       `;
     }

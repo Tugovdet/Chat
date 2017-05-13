@@ -66,11 +66,7 @@
           </div>
         `).join('');
 
-      this.el.innerHTML = `
-        <div class="chat">
-          ${messagesHTML}
-        </div>
-      `;
+      this.el.innerHTML = messagesHTML;
     }
 
     addMessage(message) {

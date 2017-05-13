@@ -1,4 +1,7 @@
-.chat {
-  font-family: Tahoma;
-  background-color: #cecece;
+.chat__message{
+  padding:5px;margin:13px 17px;width:200px;font-size:14px
+}
+
+.chat-container{
+  max-height:calc(75vh - 86px - 29px);overflow-y:scroll;padding:15px 0 0
 }
