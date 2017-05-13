@@ -36,6 +36,7 @@
       form.onSubmit((formData) => {
         chat.addMessage(formData);
         chat.render();
+        chat.scrollToBottom();
         form.reset();
       });
     }

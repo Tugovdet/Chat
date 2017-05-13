@@ -69,6 +69,10 @@
       this.el.innerHTML = messagesHTML;
     }
 
+    scrollToBottom() {
+      this.el.scrollTop = this.el.scrollHeight - this.el.clientHeight;
+    }
+
     addMessage(message) {
       this.data.messages.push(message);
     }
