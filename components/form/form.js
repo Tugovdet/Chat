@@ -1,19 +1,19 @@
 (function () {
   'use strict';
 
-  // TODO: how to define type
-  /*
-  * @typedef options
-  * 
-  */
-
-  /*
-  * Presents Form, manages events
-  */
+  /**
+   * Form options
+   * @typedef {object} formOptions
+   * @property {HTMLElement} el - Form container
+   */
 
   class Form {
-    constructor(options) {
-      this.el = options.el;
+    /**
+     * Presents Form, manages events
+     * @param {formOptions} formOptions - Form options
+     */
+    constructor(formOptions) {
+      this.el = formOptions.el;
       this._onSubmit = this._onSubmit.bind(this);
 
       this._initEvents();
@@ -30,8 +30,8 @@
 
     _getFormData() {
       // TODO: search by names, delete temporary css classes
-      const usernameEl = document.querySelector('.js-username');
-      const messageEl = document.querySelector('.js-message');
+      const usernameEl = document.querySelector('[name="username"]');
+      const messageEl = document.querySelector('[name="message"]');
 
       const formData = { message: messageEl.value, username: usernameEl.value, date: new Date() };
 

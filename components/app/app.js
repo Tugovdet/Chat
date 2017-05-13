@@ -1,19 +1,19 @@
 (function () {
   'use strict';
 
-  /*
-  * This is the mediator for all components of aplication
-  * @params {HTMLElement} root node for the application
-  */
   class App {
+    /**
+     * This is the mediator for all components of application
+     * @param {HTMLElement} rootEl - root node for the application
+     */
     constructor(rootEl) {
       this.rootEl = rootEl;
       this._createElements();
     }
 
-    /*
-    * Creates elements for components
-    */
+    /**
+     * Creates elements for components
+     */
     _createElements() {
       this.formEl = document.createElement('div');
       this.formEl.classList.add('form-container');
@@ -25,9 +25,9 @@
       this.rootEl.appendChild(this.chatEl);
     }
 
-    /*
-    * Runs application, connects all components
-    */
+    /**
+     * Runs application, connects all components
+     */
     run() {
       const form = new Form({ el: this.formEl });
       const chat = new Chat({ el: this.chatEl });
@@ -42,4 +42,4 @@
 
   // export
   window.App = App;
-})();
+}());

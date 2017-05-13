@@ -1,28 +1,45 @@
 (function () {
   'use strict';
 
-  // TODO: how to define type
-  /*
-  * @typedef options
-  * 
-  */
+  /**
+   * Message object
+   * @typedef {object} messageObj
+   * @property {string} username
+   * @property {string} message
+   * @property {string} date
+   */
 
-  /*
-  * Presents Chat, manages work with messages
-  */
+  /**
+   * Chat data
+   * @typedef {object} chatData
+   * @property {Array.<messageObj>} messages - messages
+   */
+ 
+  /**
+   * Chat options
+   * @typedef {object} chatOptions
+   * @property {HTMLElement} el - Chat container
+   * @property {object} chatData - Chat data
+   */
+
   class Chat {
-    constructor(options) {
-      this.el = options.el;
-      this.data = options.data || {};
+    /**
+     * Presents Chat, manages work with messages
+     * @param {chatOptions} chatOptions - Chat options
+     */
+    constructor(chatOptions) {
+      this.el = chatOptions.el;
+      this.data = chatOptions.chatData || {};
       this.data.messages = this.data.messages || [];
 
       this.render();
     }
 
-    /* 
-    * Formats time to HH:MM where H - hours, M - minutes
-    * @return {string} formated time
-    */
+    /**
+     * Formats time to HH:MM where H - hours, M - minutes
+     * @param {Date} date
+     * @return {string} formated time
+     */
     _formatTime(date) {
       let hours = date.getHours();
       let minutes = date.getMinutes();
