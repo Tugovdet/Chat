@@ -4,7 +4,7 @@
   /**
    * Message object
    * @typedef {object} messageObj
-   * @property {string} username
+   * @property {string} user
    * @property {string} message
    * @property {string} date
    */
@@ -14,7 +14,7 @@
    * @typedef {object} chatData
    * @property {Array.<messageObj>} messages - messages
    */
- 
+
   /**
    * Chat options
    * @typedef {object} chatOptions
@@ -35,38 +35,16 @@
       this.render();
     }
 
-    /**
-     * Formats time to HH:MM where H - hours, M - minutes
-     * @param {Date} date
-     * @return {string} formated time
-     */
-    _formatTime(date) {
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
-
-      if (hours < 10) {
-        hours = `0${hours}`;
-      }
-
-      if (minutes < 10) {
-        minutes = `0${minutes}`;
-      }
-
-      return `${hours}:${minutes}`;
-    }
-
     // TODO: template
     render() {
-      const messagesHTML = this.data.messages.map(mData =>
+      this.el.innerHTML = this.data.messages.map(mData =>
         `
           <div class="chat__message">
-            <span class="chat__author">${mData.username}</span>
-            <span class="chat__time">(${this._formatTime(mData.date)}):</span>
+            <span class="chat__author">${mData.user}</span>
+            <span class="chat__time">(${mData.date || 'no date'}):</span>
             ${mData.message}
           </div>
         `).join('');
-
-      this.el.innerHTML = messagesHTML;
     }
 
     scrollToBottom() {

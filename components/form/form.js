@@ -18,9 +18,12 @@
 
       this._initEvents();
       this.render();
+
+      this.usernameEl = document.querySelector('.form__username');
+      this.messageEl = document.querySelector('.form__input');
     }
 
-    onSubmit(cb = () => {}) {
+    onSubmit(cb = () => { }) {
       this._submitCallback = cb;
     }
 
@@ -28,25 +31,48 @@
       this.el.addEventListener('submit', this._onSubmit, false);
     }
 
+    /**
+     * Formats time to HH:MM where H - hours, M - minutes
+     * @param {Date} date
+     * @return {string} formated time
+     */
+    _formatTime(date) {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+
+      if (hours < 10) {
+        hours = `0${hours}`;
+      }
+
+      if (minutes < 10) {
+        minutes = `0${minutes}`;
+      }
+
+      return `${hours}:${minutes}`;
+    }
+
     _getFormData() {
-      const usernameEl = document.querySelector('.form__username');
-      const messageEl = document.querySelector('.form__input');
-
-      const formData = { message: messageEl.value, username: usernameEl.value, date: new Date() };
-
-      return formData;
+      return {
+        message: this.messageEl.value,
+        user: this.usernameEl.value,
+        date: this._formatTime(new Date()),
+      };
     }
 
     _onSubmit(ev) {
       ev.preventDefault();
 
-      const formData = this._getFormData();
-      this._submitCallback(formData);
+      const customEv = new CustomEvent('formDataReceived', {
+        detail: {
+          formData: this._getFormData(),
+        },
+      });
+
+      this.el.dispatchEvent(customEv);
     }
 
-    reset() {
-      // TODO: refactoring
-      this.el.querySelector('.form__input').value = '';
+    clearMessageInput() {
+      this.messageEl.value = '';
     }
 
     render() {

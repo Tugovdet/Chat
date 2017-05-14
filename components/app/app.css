@@ -1,5 +1,11 @@
 @import "https://fonts.googleapis.com/css?family=Montserrat";
 
 .app{
-  width:400px;height:80vh;box-shadow:0 0 30px -5px grey;margin:10vh calc(50vw - 200px);background:#fafafa;position:relative;font-family:'Montserrat',sans-serif
+  width:400px;
+  height:80vh;
+  box-shadow:0 0 30px -5px grey;
+  margin:10vh calc(50vw - 200px);
+  background:#fafafa;
+  position:relative;
+  font-family:'Montserrat',sans-serif
 }

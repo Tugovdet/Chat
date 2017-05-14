@@ -1,9 +1,44 @@
-.form{position:absolute;bottom:0;width:calc(100% - 8px);padding:10px 4px 6px;background:#c8c8c8}
+.form{
+  position:absolute;
+  bottom:0;
+  width:calc(100% - 8px);
+  padding:10px 4px 6px;
+  background:#c8c8c8
+}
 
-.form__username{width:calc(100% - 32px);padding:15px;background:#f0f0f0;color:teal;border:1px solid teal;}
+.form__username{
+  width:calc(100% - 32px);
+  padding:15px;
+  background:#f0f0f0;
+  color:teal;
+  border:1px solid teal;
+}
 
-.form__input{height:40px;width:calc(85% - 15px);padding:10px;box-sizing:border-box;margin:0 5px 5px;vertical-align:top;font-family:'Montserrat',sans-serif}
+.form__input{
+  height:40px;
+  width:calc(85% - 15px);
+  padding:10px;
+  box-sizing:border-box;
+  margin:0 5px 5px;
+  vertical-align:top;
+  font-family:'Montserrat',sans-serif
+}
 
-.form__submit{text-align: center;height:40px;width:calc(15% - 5px);padding:10px;box-sizing:border-box;margin:0 5px 5px 0;vertical-align:top;border:1px solid teal;cursor:pointer;color:teal;transition:all .4s}
+.form__submit{
+  text-align: center;
+  height:40px;
+  width:calc(15% - 5px);
+  padding:10px;
+  box-sizing:border-box;
+  margin:0 5px 5px 0;
+  vertical-align:top;
+  border:1px solid teal;
+  cursor:pointer;
+  color:teal;
+  transition:all .4s
+}
 
-.form__submit:hover{background:teal;color:#fff}
+.form__submit:hover{
+  background:teal;
+  color:#fff
+}

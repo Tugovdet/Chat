@@ -23,22 +23,58 @@
 
       this.el.appendChild(this.formEl);
       this.el.appendChild(this.chatEl);
+
+      this.updateMessageTimerId = null;
+    }
+
+    /**
+     * Periodically updates messages in chat
+     * @param {function} cb - callback
+     * @param {number} delay - delay in ms
+     */
+    _setUpdateMessagesInterval(cb, delay) {
+      cb(); // first update without delay
+
+      const self = this;
+      function innerSetUpdateMessagesInterval() {
+        self.updateMessageTimerId = setTimeout(() => {
+          cb();
+          innerSetUpdateMessagesInterval();
+        }, delay);
+      }
+
+      innerSetUpdateMessagesInterval();
     }
 
     /**
      * Runs application, connects all components
      */
     run() {
+      const messageStore = new MessageStore();
+      const chat = new Chat({
+        el: this.chatEl,
+      });
       const form = new Form({ el: this.formEl });
-      const chat = new Chat({ el: this.chatEl });
 
-      // TODO: user event
-      form.onSubmit((formData) => {
-        chat.addMessage(formData);
+      this.formEl.addEventListener('formDataReceived', (ev) => {
+        chat.addMessage(ev.detail.formData);
         chat.render();
         chat.scrollToBottom();
-        form.reset();
+        form.clearMessageInput();
+        messageStore.add(ev.detail.formData);
       });
+
+      this._setUpdateMessagesInterval(() => {
+        messageStore.httpGet().then((messagesData) => {
+          if (messagesData === undefined || messagesData === null) {
+            return;
+          }
+
+          chat.setMessages(Object.values(messagesData));
+          chat.render();
+          chat.scrollToBottom(); // not here. server side event?
+        });
+      }, 500);
     }
   }
 
