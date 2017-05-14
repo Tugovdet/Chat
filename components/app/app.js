@@ -74,7 +74,7 @@
           chat.render();
           chat.scrollToBottom(); // not here. server side event?
         });
-      }, 500);
+      }, 2000);
     }
   }
 
