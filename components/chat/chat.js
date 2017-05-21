@@ -37,6 +37,8 @@
 
     // TODO: template
     render() {
+      this._saveScrollTop();
+
       this.el.innerHTML = this.data.messages.map(mData =>
         `
           <div class="chat__message">
@@ -45,6 +47,29 @@
             ${mData.message}
           </div>
         `).join('');
+
+        this._restoreScrollTop();
+    }
+
+    _saveScrollTop() {
+      // if scroll is at the bottom
+      if (this.el.scrollTop === this.el.scrollHeight - this.el.clientHeight) {
+        // then it should be at the bottom after rerendering
+        this.scrollToBottomNeeded = true;
+      // if it is not
+      } else {
+        // it should be at the same place
+        this.elScrollTop = this.el.scrollTop;
+      }
+    }
+
+    _restoreScrollTop() {
+      if (this.scrollToBottomNeeded === true) {
+        this.scrollToBottom();
+        this.scrollToBottomNeeded = false;
+      } else {
+        this.el.scrollTop = this.elScrollTop;
+      }
     }
 
     scrollToBottom() {

@@ -70,9 +70,8 @@
             return;
           }
 
-          chat.setMessages(Object.values(messagesData));
+          chat.setMessages(Object.values(messagesData)); // save last key?
           chat.render();
-          chat.scrollToBottom(); // not here. server side event?
         });
       }, 2000);
     }
