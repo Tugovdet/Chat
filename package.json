@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "static ."
+    "serve": "static .",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/Tugovdet/Chat#readme",
   "devDependencies": {
-    "node-static": "^0.7.9"
+    "node-static": "^0.7.9",
+    "webpack": "^2.5.1"
   }
 }
