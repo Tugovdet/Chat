@@ -63,28 +63,300 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return App; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__messageStore_messageStore__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__chat_chat__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__form_form__ = __webpack_require__(2);
 
 
+var pug_has_own_property = Object.prototype.hasOwnProperty;
+
+/**
+ * Merge two attribute objects giving precedence
+ * to values in object `b`. Classes are special-cased
+ * allowing for arrays and merging/joining appropriately
+ * resulting in a string.
+ *
+ * @param {Object} a
+ * @param {Object} b
+ * @return {Object} a
+ * @api private
+ */
+
+exports.merge = pug_merge;
+function pug_merge(a, b) {
+  if (arguments.length === 1) {
+    var attrs = a[0];
+    for (var i = 1; i < a.length; i++) {
+      attrs = pug_merge(attrs, a[i]);
+    }
+    return attrs;
+  }
+
+  for (var key in b) {
+    if (key === 'class') {
+      var valA = a[key] || [];
+      a[key] = (Array.isArray(valA) ? valA : [valA]).concat(b[key] || []);
+    } else if (key === 'style') {
+      var valA = pug_style(a[key]);
+      var valB = pug_style(b[key]);
+      a[key] = valA + valB;
+    } else {
+      a[key] = b[key];
+    }
+  }
+
+  return a;
+};
+
+/**
+ * Process array, object, or string as a string of classes delimited by a space.
+ *
+ * If `val` is an array, all members of it and its subarrays are counted as
+ * classes. If `escaping` is an array, then whether or not the item in `val` is
+ * escaped depends on the corresponding item in `escaping`. If `escaping` is
+ * not an array, no escaping is done.
+ *
+ * If `val` is an object, all the keys whose value is truthy are counted as
+ * classes. No escaping is done.
+ *
+ * If `val` is a string, it is counted as a class. No escaping is done.
+ *
+ * @param {(Array.<string>|Object.<string, boolean>|string)} val
+ * @param {?Array.<string>} escaping
+ * @return {String}
+ */
+exports.classes = pug_classes;
+function pug_classes_array(val, escaping) {
+  var classString = '', className, padding = '', escapeEnabled = Array.isArray(escaping);
+  for (var i = 0; i < val.length; i++) {
+    className = pug_classes(val[i]);
+    if (!className) continue;
+    escapeEnabled && escaping[i] && (className = pug_escape(className));
+    classString = classString + padding + className;
+    padding = ' ';
+  }
+  return classString;
+}
+function pug_classes_object(val) {
+  var classString = '', padding = '';
+  for (var key in val) {
+    if (key && val[key] && pug_has_own_property.call(val, key)) {
+      classString = classString + padding + key;
+      padding = ' ';
+    }
+  }
+  return classString;
+}
+function pug_classes(val, escaping) {
+  if (Array.isArray(val)) {
+    return pug_classes_array(val, escaping);
+  } else if (val && typeof val === 'object') {
+    return pug_classes_object(val);
+  } else {
+    return val || '';
+  }
+}
+
+/**
+ * Convert object or string to a string of CSS styles delimited by a semicolon.
+ *
+ * @param {(Object.<string, string>|string)} val
+ * @return {String}
+ */
+
+exports.style = pug_style;
+function pug_style(val) {
+  if (!val) return '';
+  if (typeof val === 'object') {
+    var out = '';
+    for (var style in val) {
+      /* istanbul ignore else */
+      if (pug_has_own_property.call(val, style)) {
+        out = out + style + ':' + val[style] + ';';
+      }
+    }
+    return out;
+  } else {
+    val += '';
+    if (val[val.length - 1] !== ';') 
+      return val + ';';
+    return val;
+  }
+};
+
+/**
+ * Render the given attribute.
+ *
+ * @param {String} key
+ * @param {String} val
+ * @param {Boolean} escaped
+ * @param {Boolean} terse
+ * @return {String}
+ */
+exports.attr = pug_attr;
+function pug_attr(key, val, escaped, terse) {
+  if (val === false || val == null || !val && (key === 'class' || key === 'style')) {
+    return '';
+  }
+  if (val === true) {
+    return ' ' + (terse ? key : key + '="' + key + '"');
+  }
+  if (typeof val.toJSON === 'function') {
+    val = val.toJSON();
+  }
+  if (typeof val !== 'string') {
+    val = JSON.stringify(val);
+    if (!escaped && val.indexOf('"') !== -1) {
+      return ' ' + key + '=\'' + val.replace(/'/g, '&#39;') + '\'';
+    }
+  }
+  if (escaped) val = pug_escape(val);
+  return ' ' + key + '="' + val + '"';
+};
+
+/**
+ * Render the given attributes object.
+ *
+ * @param {Object} obj
+ * @param {Object} terse whether to use HTML5 terse boolean attributes
+ * @return {String}
+ */
+exports.attrs = pug_attrs;
+function pug_attrs(obj, terse){
+  var attrs = '';
+
+  for (var key in obj) {
+    if (pug_has_own_property.call(obj, key)) {
+      var val = obj[key];
+
+      if ('class' === key) {
+        val = pug_classes(val);
+        attrs = pug_attr(key, val, false, terse) + attrs;
+        continue;
+      }
+      if ('style' === key) {
+        val = pug_style(val);
+      }
+      attrs += pug_attr(key, val, false, terse);
+    }
+  }
+
+  return attrs;
+};
+
+/**
+ * Escape the given string of `html`.
+ *
+ * @param {String} html
+ * @return {String}
+ * @api private
+ */
+
+var pug_match_html = /["&<>]/;
+exports.escape = pug_escape;
+function pug_escape(_html){
+  var html = '' + _html;
+  var regexResult = pug_match_html.exec(html);
+  if (!regexResult) return _html;
+
+  var result = '';
+  var i, lastIndex, escape;
+  for (i = regexResult.index, lastIndex = 0; i < html.length; i++) {
+    switch (html.charCodeAt(i)) {
+      case 34: escape = '&quot;'; break;
+      case 38: escape = '&amp;'; break;
+      case 60: escape = '&lt;'; break;
+      case 62: escape = '&gt;'; break;
+      default: continue;
+    }
+    if (lastIndex !== i) result += html.substring(lastIndex, i);
+    lastIndex = i + 1;
+    result += escape;
+  }
+  if (lastIndex !== i) return result + html.substring(lastIndex, i);
+  else return result;
+};
+
+/**
+ * Re-throw the given `err` in context to the
+ * the pug in `filename` at the given `lineno`.
+ *
+ * @param {Error} err
+ * @param {String} filename
+ * @param {String} lineno
+ * @param {String} str original source
+ * @api private
+ */
+
+exports.rethrow = pug_rethrow;
+function pug_rethrow(err, filename, lineno, str){
+  if (!(err instanceof Error)) throw err;
+  if ((typeof window != 'undefined' || !filename) && !str) {
+    err.message += ' on line ' + lineno;
+    throw err;
+  }
+  try {
+    str = str || __webpack_require__(8).readFileSync(filename, 'utf8')
+  } catch (ex) {
+    pug_rethrow(err, null, lineno)
+  }
+  var context = 3
+    , lines = str.split('\n')
+    , start = Math.max(lineno - context, 0)
+    , end = Math.min(lines.length, lineno + context);
+
+  // Error context
+  var context = lines.slice(start, end).map(function(line, i){
+    var curr = i + start + 1;
+    return (curr == lineno ? '  > ' : '    ')
+      + curr
+      + '| '
+      + line;
+  }).join('\n');
+
+  // Alter exception message
+  err.path = filename;
+  err.message = (filename || 'Pug') + ':' + lineno
+    + '\n' + context + '\n\n' + err.message;
+  throw err;
+};
 
 
-class App {
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.App = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _messageStore = __webpack_require__(4);
+
+var _chat = __webpack_require__(2);
+
+var _form = __webpack_require__(3);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var App = function () {
   /**
    * This is the mediator for all components of application
    * @param {HTMLElement} el - application container
    */
-  constructor(el) {
+  function App(el) {
+    _classCallCheck(this, App);
+
     this.el = el;
     this._createElements();
   }
@@ -92,86 +364,102 @@ class App {
   /**
    * Creates elements for components
    */
-  _createElements() {
-    this.formEl = document.createElement('div');
-    this.formEl.classList.add('form-container');
 
-    this.chatEl = document.createElement('div');
-    this.chatEl.classList.add('chat-container');
 
-    this.el.appendChild(this.formEl);
-    this.el.appendChild(this.chatEl);
+  _createClass(App, [{
+    key: '_createElements',
+    value: function _createElements() {
+      this.formEl = document.createElement('div');
+      this.formEl.classList.add('form-container');
 
-    this.updateMessageTimerId = null;
-  }
+      this.chatEl = document.createElement('div');
+      this.chatEl.classList.add('chat-container');
 
-  /**
-   * Periodically updates messages in chat
-   * @param {function} cb - callback
-   * @param {number} delay - delay in ms
-   */
-  _setUpdateMessagesInterval(cb, delay) {
-    cb(); // first update without delay
-
-    const self = this;
-    function innerSetUpdateMessagesInterval() {
-      self.updateMessageTimerId = setTimeout(() => {
-        cb();
-        innerSetUpdateMessagesInterval();
-      }, delay);
+      this.el.appendChild(this.formEl);
+      this.el.appendChild(this.chatEl);
     }
 
-    innerSetUpdateMessagesInterval();
-  }
+    /**
+     * Periodically updates messages in chat
+     * @param {function} cb - callback
+     * @param {number} delay - delay in ms
+     */
 
-  /**
-   * Runs application, connects all components
-   */
-  run() {
-    const messageStore = new __WEBPACK_IMPORTED_MODULE_0__messageStore_messageStore__["a" /* MessageStore */]();
-    const chat = new __WEBPACK_IMPORTED_MODULE_1__chat_chat__["a" /* Chat */]({
-      el: this.chatEl,
-    });
-    const form = new __WEBPACK_IMPORTED_MODULE_2__form_form__["a" /* Form */]({ el: this.formEl });
+  }, {
+    key: '_setUpdateMessagesInterval',
+    value: function _setUpdateMessagesInterval(cb, delay) {
+      cb(); // first update without delay
 
-    this.formEl.addEventListener('formDataReceived', (ev) => {
-      chat.addMessage(ev.detail.formData);
-      chat.render();
-      chat.scrollToBottom();
-      form.clearMessageInput();
-      messageStore.add(ev.detail.formData);
-    });
+      var self = this;
+      function innerSetUpdateMessagesInterval() {
+        self.updateMessageTimerId = setTimeout(function () {
+          cb();
+          innerSetUpdateMessagesInterval();
+        }, delay);
+      }
 
-    this._setUpdateMessagesInterval(() => {
-      messageStore.httpGet().then((messagesData) => {
-        if (messagesData === undefined || messagesData === null) {
-          return;
-        }
+      innerSetUpdateMessagesInterval();
+    }
 
-        // save last key to know if messages changed?
-        chat.setMessages(Object.values(messagesData));
-        chat.render();
+    /**
+     * Runs application, connects all components
+     */
+
+  }, {
+    key: 'run',
+    value: function run() {
+      var messageStore = new _messageStore.MessageStore();
+      var chat = new _chat.Chat({
+        el: this.chatEl
       });
-    }, 2000);
-  }
-}
+      var form = new _form.Form({ el: this.formEl });
 
+      this.formEl.addEventListener('formDataReceived', function (ev) {
+        chat.addMessage(ev.detail.formData);
+        chat.render();
+        chat.scrollToBottom();
+        form.clearMessageInput();
+        messageStore.add(ev.detail.formData);
+      });
 
+      this._setUpdateMessagesInterval(function () {
+        messageStore.httpGet().then(function (messagesData) {
+          if (messagesData === undefined || messagesData === null) {
+            return;
+          }
 
+          // save last key to know if messages changed?
+          chat.setMessages(Object.values(messagesData));
+          chat.render();
+        });
+      }, 2000);
+    }
+  }]);
+
+  return App;
+}();
+
+exports.App = App;
 
 /***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Chat; });
-/**
- * Message object
- * @typedef {object} messageObj
- * @property {string} user
- * @property {string} message
- * @property {string} date
- */
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Chat = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Message object
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @typedef {object} messageObj
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @property {string} user
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @property {string} message
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @property {string} date
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
 /**
  * Chat data
@@ -186,90 +474,122 @@ class App {
  * @property {object} chatData - Chat data
  */
 
-class Chat {
+var _chatTmpl = __webpack_require__(6);
+
+var _chatTmpl2 = _interopRequireDefault(_chatTmpl);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Chat = function () {
   /**
    * Presents Chat, manages work with messages
    * @param {chatOptions} chatOptions - Chat options
    */
-  constructor(chatOptions) {
-    this.el = chatOptions.el;
-    this.data = chatOptions.chatData || {};
-    this.data.messages = this.data.messages || [];
+  function Chat(_ref) {
+    var el = _ref.el,
+        _ref$chatData = _ref.chatData,
+        chatData = _ref$chatData === undefined ? { messages: [] } : _ref$chatData;
+
+    _classCallCheck(this, Chat);
+
+    this.el = el;
+    this.data = chatData;
+    this.data.messages = chatData.messages;
 
     this.render();
   }
 
   // TODO: template
-  render() {
-    this._saveScrollTop();
 
-    this.el.innerHTML = this.data.messages.map(mData =>
-      `
-        <div class="chat__message">
-          <span class="chat__author">${mData.user}</span>
-          <span class="chat__time">(${mData.date || 'no date'}):</span>
-          ${mData.message}
-        </div>
-      `).join('');
 
+  _createClass(Chat, [{
+    key: 'render',
+    value: function render() {
+      this._saveScrollTop();
+      this.el.innerHTML = (0, _chatTmpl2.default)(this.data);
       this._restoreScrollTop();
-  }
-
-  _saveScrollTop() {
-    // if scroll is at the bottom
-    if (this.el.scrollTop === this.el.scrollHeight - this.el.clientHeight) {
-      // then it should be at the bottom after rerendering
-      this.scrollToBottomNeeded = true;
-    // if it is not
-    } else {
-      // it should be at the same place
-      this.elScrollTop = this.el.scrollTop;
     }
-  }
-
-  _restoreScrollTop() {
-    if (this.scrollToBottomNeeded === true) {
-      this.scrollToBottom();
-      this.scrollToBottomNeeded = false;
-    } else {
-      this.el.scrollTop = this.elScrollTop;
+  }, {
+    key: '_saveScrollTop',
+    value: function _saveScrollTop() {
+      // if scroll is at the bottom
+      if (this.el.scrollTop === this.el.scrollHeight - this.el.clientHeight) {
+        // then it should be at the bottom after rerendering
+        this.scrollToBottomNeeded = true;
+        // if it is not
+      } else {
+        // it should be at the same place
+        this.elScrollTop = this.el.scrollTop;
+      }
     }
-  }
+  }, {
+    key: '_restoreScrollTop',
+    value: function _restoreScrollTop() {
+      if (this.scrollToBottomNeeded === true) {
+        this.scrollToBottom();
+        this.scrollToBottomNeeded = false;
+      } else {
+        this.el.scrollTop = this.elScrollTop;
+      }
+    }
+  }, {
+    key: 'scrollToBottom',
+    value: function scrollToBottom() {
+      this.el.scrollTop = this.el.scrollHeight - this.el.clientHeight;
+    }
+  }, {
+    key: 'addMessage',
+    value: function addMessage(message) {
+      this.data.messages.push(message);
+    }
+  }, {
+    key: 'setMessages',
+    value: function setMessages(messages) {
+      this.data.messages = messages;
+    }
+  }]);
 
-  scrollToBottom() {
-    this.el.scrollTop = this.el.scrollHeight - this.el.clientHeight;
-  }
+  return Chat;
+}();
 
-  addMessage(message) {
-    this.data.messages.push(message);
-  }
-
-  setMessages(messages) {
-    this.data.messages = messages;
-  }
-}
-
-
-
+exports.Chat = Chat;
 
 /***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Form; });
-/**
- * Form options
- * @typedef {object} formOptions
- * @property {HTMLElement} el - Form container
- */
 
-class Form {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Form = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Form options
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @typedef {object} formOptions
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @property {HTMLElement} el - Form container
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+var _formTmpl = __webpack_require__(7);
+
+var _formTmpl2 = _interopRequireDefault(_formTmpl);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Form = function () {
   /**
    * Presents Form, manages events
    * @param {formOptions} formOptions - Form options
    */
-  constructor(formOptions) {
+  function Form(formOptions) {
+    _classCallCheck(this, Form);
+
     this.el = formOptions.el;
     this._onSubmit = this._onSubmit.bind(this);
 
@@ -280,78 +600,95 @@ class Form {
     this.messageEl = document.querySelector('.form__input');
   }
 
-  onSubmit(cb = () => { }) {
-    this._submitCallback = cb;
-  }
+  _createClass(Form, [{
+    key: 'onSubmit',
+    value: function onSubmit() {
+      var cb = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 
-  _initEvents() {
-    this.el.addEventListener('submit', this._onSubmit, false);
-  }
-
-  /**
-   * Formats time to HH:MM where H - hours, M - minutes
-   * @param {Date} date
-   * @return {string} formated time
-   */
-  _formatTime(date) {
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-
-    if (hours < 10) {
-      hours = `0${hours}`;
+      this._submitCallback = cb;
+    }
+  }, {
+    key: '_initEvents',
+    value: function _initEvents() {
+      this.el.addEventListener('submit', this._onSubmit, false);
     }
 
-    if (minutes < 10) {
-      minutes = `0${minutes}`;
+    /**
+     * Formats time to HH:MM where H - hours, M - minutes
+     * @param {Date} date
+     * @return {string} formated time
+     */
+
+  }, {
+    key: '_formatTime',
+    value: function _formatTime(date) {
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+
+      if (hours < 10) {
+        hours = '0' + hours;
+      }
+
+      if (minutes < 10) {
+        minutes = '0' + minutes;
+      }
+
+      return hours + ':' + minutes;
     }
+  }, {
+    key: '_getFormData',
+    value: function _getFormData() {
+      return {
+        message: this.messageEl.value,
+        user: this.usernameEl.value,
+        date: this._formatTime(new Date())
+      };
+    }
+  }, {
+    key: '_onSubmit',
+    value: function _onSubmit(ev) {
+      ev.preventDefault();
 
-    return `${hours}:${minutes}`;
-  }
+      var customEv = new CustomEvent('formDataReceived', {
+        detail: {
+          formData: this._getFormData()
+        }
+      });
 
-  _getFormData() {
-    return {
-      message: this.messageEl.value,
-      user: this.usernameEl.value,
-      date: this._formatTime(new Date()),
-    };
-  }
+      this.el.dispatchEvent(customEv);
+    }
+  }, {
+    key: 'clearMessageInput',
+    value: function clearMessageInput() {
+      this.messageEl.value = '';
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      this.el.innerHTML = (0, _formTmpl2.default)();
+    }
+  }]);
 
-  _onSubmit(ev) {
-    ev.preventDefault();
+  return Form;
+}();
 
-    const customEv = new CustomEvent('formDataReceived', {
-      detail: {
-        formData: this._getFormData(),
-      },
-    });
-
-    this.el.dispatchEvent(customEv);
-  }
-
-  clearMessageInput() {
-    this.messageEl.value = '';
-  }
-
-  render() {
-    this.el.innerHTML = `
-      <input class="form__username" required placeholder="Username" />
-      <form class="form">
-        <input class="form__input" required placeholder="Message" />
-        <input type="submit" value="Send" class="form__submit" />
-      </form>
-    `;
-  }
-}
-
-
-
+exports.Form = Form;
 
 /***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MessageStore; });
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 /**
  * Message object
  * @typedef {object} messageObj
@@ -360,8 +697,12 @@ class Form {
  * @property {string} date
  */
 
-class MessageStore {
-  constructor(reqUrl = 'https://korneyev-chat.firebaseio.com/messages.json') {
+var MessageStore = function () {
+  function MessageStore() {
+    var reqUrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'https://korneyev-chat.firebaseio.com/messages.json';
+
+    _classCallCheck(this, MessageStore);
+
     this.reqUrl = reqUrl;
   }
 
@@ -369,49 +710,100 @@ class MessageStore {
    * Adds message to server store
    * @param {messageObj} message
    */
-  add(message) {
-    const req = new XMLHttpRequest();
-    req.open('POST', this.reqUrl, true);
-    req.send(JSON.stringify(message));
-  }
 
-  /**
-   * Gets messages from server store
-   * @return {promise} promise
-   */
-  httpGet() {
-    return new Promise((resolve, reject) => {
-      const req = new XMLHttpRequest();
-      req.open('GET', this.reqUrl, true);
 
-      req.addEventListener('load', (ev) => {
-        if (req.readyState === 4) {
-          resolve(JSON.parse(req.responseText));
-        }
-        // TODO: error handle?
+  _createClass(MessageStore, [{
+    key: 'add',
+    value: function add(message) {
+      var req = new XMLHttpRequest();
+      req.open('POST', this.reqUrl, true);
+      req.send(JSON.stringify(message));
+    }
+
+    /**
+     * Gets messages from server store
+     * @return {promise} promise
+     */
+
+  }, {
+    key: 'httpGet',
+    value: function httpGet() {
+      var _this = this;
+
+      return new Promise(function (resolve, reject) {
+        var req = new XMLHttpRequest();
+        req.open('GET', _this.reqUrl, true);
+
+        req.addEventListener('load', function (ev) {
+          if (req.readyState === 4) {
+            resolve(JSON.parse(req.responseText));
+          }
+          // TODO: error handle?
+        });
+        req.send();
       });
-      req.send();
-    });
-  }
-}
+    }
+  }]);
 
+  return MessageStore;
+}();
 
-
+exports.MessageStore = MessageStore;
 
 /***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_app_app__ = __webpack_require__(0);
 
+
+var _app = __webpack_require__(1);
 
 'use strict';
 
-const app = new __WEBPACK_IMPORTED_MODULE_0__components_app_app__["a" /* App */](document.querySelector('.app'));
+var app = new _app.App(document.querySelector('.app'));
 app.run();
 
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var pug = __webpack_require__(0);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;var locals_for_with = (locals || {});(function (messages) {// iterate messages
+;(function(){
+  var $$obj = messages;
+  if ('number' == typeof $$obj.length) {
+      for (var pug_index0 = 0, $$l = $$obj.length; pug_index0 < $$l; pug_index0++) {
+        var message = $$obj[pug_index0];
+pug_html = pug_html + "\u003Cdiv class=\"chat__message\"\u003E\u003Cspan class=\"chat__author\"\u003E" + (pug.escape(null == (pug_interp = message.user) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003Cspan class=\"chat__date\"\u003E" + (pug.escape(null == (pug_interp = ' (' + (message.date || 'no date') + '): ') ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003Cspan\u003E" + (pug.escape(null == (pug_interp = message.message) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E";
+      }
+  } else {
+    var $$l = 0;
+    for (var pug_index0 in $$obj) {
+      $$l++;
+      var message = $$obj[pug_index0];
+pug_html = pug_html + "\u003Cdiv class=\"chat__message\"\u003E\u003Cspan class=\"chat__author\"\u003E" + (pug.escape(null == (pug_interp = message.user) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003Cspan class=\"chat__date\"\u003E" + (pug.escape(null == (pug_interp = ' (' + (message.date || 'no date') + '): ') ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003Cspan\u003E" + (pug.escape(null == (pug_interp = message.message) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E";
+    }
+  }
+}).call(this);
+}.call(this,"messages" in locals_for_with?locals_for_with.messages:typeof messages!=="undefined"?messages:undefined));;return pug_html;};
+module.exports = template;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var pug = __webpack_require__(0);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cinput class=\"form__username\" required placeholder=\"Username\"\u003E\u003Cform class=\"form\"\u003E\u003Cinput class=\"form__input\" required placeholder=\"Message\"\u003E\u003Cinput class=\"form__submit\" type=\"submit\" value=\"Send\"\u003E\u003C\u002Fform\u003E";;return pug_html;};
+module.exports = template;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
 
 /***/ })
 /******/ ]);

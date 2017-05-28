@@ -24,8 +24,6 @@ class App {
 
     this.el.appendChild(this.formEl);
     this.el.appendChild(this.chatEl);
-
-    this.updateMessageTimerId = null;
   }
 
   /**

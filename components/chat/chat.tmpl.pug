@@ -1,0 +1,5 @@
+each message in messages
+    div.chat__message
+        span.chat__author=message.user
+        span.chat__date=' (' + (message.date || 'no date') + '): '
+        span=message.message

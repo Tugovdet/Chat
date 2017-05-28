@@ -19,15 +19,17 @@
  * @property {object} chatData - Chat data
  */
 
+import chatTemplate from '../chat/chat.tmpl.pug';
+
 class Chat {
   /**
    * Presents Chat, manages work with messages
    * @param {chatOptions} chatOptions - Chat options
    */
-  constructor(chatOptions) {
-    this.el = chatOptions.el;
-    this.data = chatOptions.chatData || {};
-    this.data.messages = this.data.messages || [];
+  constructor({ el, chatData = { messages: [] } }) {
+    this.el = el;
+    this.data = chatData;
+    this.data.messages = chatData.messages;
 
     this.render();
   }
@@ -35,17 +37,8 @@ class Chat {
   // TODO: template
   render() {
     this._saveScrollTop();
-
-    this.el.innerHTML = this.data.messages.map(mData =>
-      `
-        <div class="chat__message">
-          <span class="chat__author">${mData.user}</span>
-          <span class="chat__time">(${mData.date || 'no date'}):</span>
-          ${mData.message}
-        </div>
-      `).join('');
-
-      this._restoreScrollTop();
+    this.el.innerHTML = chatTemplate(this.data);
+    this._restoreScrollTop();
   }
 
   _saveScrollTop() {

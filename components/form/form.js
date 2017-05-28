@@ -4,6 +4,8 @@
  * @property {HTMLElement} el - Form container
  */
 
+import formTemplate from '../form/form.tmpl.pug';
+
 class Form {
   /**
    * Presents Form, manages events
@@ -73,13 +75,7 @@ class Form {
   }
 
   render() {
-    this.el.innerHTML = `
-      <input class="form__username" required placeholder="Username" />
-      <form class="form">
-        <input class="form__input" required placeholder="Message" />
-        <input type="submit" value="Send" class="form__submit" />
-      </form>
-    `;
+    this.el.innerHTML = formTemplate();
   }
 }
 
