@@ -16,4 +16,10 @@ module.exports = {
       { test: /\.pug$/, use: 'pug-loader' },
     ],
   },
+  devServer: {
+    contentBase: __dirname,
+    compress: true,
+    port: 9000,
+    historyApiFallback: true,
+  },
 };

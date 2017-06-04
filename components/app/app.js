@@ -2,7 +2,7 @@ import { MessageStore } from '../messageStore/messageStore';
 import { Chat } from '../chat/chat';
 import { Form } from '../form/form';
 
-class App {
+export default class App {
   /**
    * This is the mediator for all components of application
    * @param {HTMLElement} el - application container
@@ -76,5 +76,3 @@ class App {
     }, 2000);
   }
 }
-
-export { App };
