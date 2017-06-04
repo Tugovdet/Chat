@@ -13,17 +13,13 @@ class Form {
    */
   constructor(formOptions) {
     this.el = formOptions.el;
-    this._onSubmit = this._onSubmit.bind(this);
-
-    this._initEvents();
     this.render();
+
+    this._onSubmit = this._onSubmit.bind(this);
+    this._initEvents();
 
     this.usernameEl = document.querySelector('.form__username');
     this.messageEl = document.querySelector('.form__input');
-  }
-
-  onSubmit(cb = () => { }) {
-    this._submitCallback = cb;
   }
 
   _initEvents() {

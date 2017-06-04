@@ -405,9 +405,12 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Router = function () {
-  function Router() {
+  function Router(_ref) {
+    var el = _ref.el;
+
     _classCallCheck(this, Router);
 
+    this.el = el;
     this.views = {};
     this.currentView = null;
   }
@@ -527,7 +530,7 @@ var ChatPage = function (_PageProto) {
 
         _this.hide();
 
-        new _app2.default({ el: _this.el }).run();
+        new _app2.default(_this.el).run();
         return _this;
     }
 
@@ -847,23 +850,16 @@ var Form = function () {
     _classCallCheck(this, Form);
 
     this.el = formOptions.el;
-    this._onSubmit = this._onSubmit.bind(this);
-
-    this._initEvents();
     this.render();
+
+    this._onSubmit = this._onSubmit.bind(this);
+    this._initEvents();
 
     this.usernameEl = document.querySelector('.form__username');
     this.messageEl = document.querySelector('.form__input');
   }
 
   _createClass(Form, [{
-    key: 'onSubmit',
-    value: function onSubmit() {
-      var cb = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-
-      this._submitCallback = cb;
-    }
-  }, {
     key: '_initEvents',
     value: function _initEvents() {
       this.el.addEventListener('submit', this._onSubmit, false);

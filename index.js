@@ -3,19 +3,22 @@ import MainPage from './pages/main/mainPage';
 import ChatPage from './pages/chat/chatPage';
 
 const appEl = document.querySelector('.app');
+const mainPageEl = document.createElement('div');
+const chatPageEl = document.createElement('div');
+
+appEl.appendChild(mainPageEl);
+appEl.appendChild(chatPageEl);
+
 const router = new Router({
   el: appEl,
 });
 
 const mainPage = new MainPage({
-  el: document.createElement('div'),
+  el: mainPageEl,
 });
 const chatPage = new ChatPage({
-  el: document.createElement('div'),
+  el: chatPageEl,
 });
-
-appEl.appendChild(mainPage.getElement());
-appEl.appendChild(chatPage.getElement());
 
 router.register('/main', mainPage);
 router.register('/chat', chatPage);
