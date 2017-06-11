@@ -8,8 +8,7 @@ export default class ChatPage extends PageProto {
 
     this.el.innerHTML = chatPageTemplate();
 
-    this.hide();
-
     new App(this.el).run();
+    this.hide();
   }
 }

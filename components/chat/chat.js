@@ -32,9 +32,9 @@ class Chat {
     this.data.messages = chatData.messages;
 
     this.render();
+    this.scrollToBottom();
   }
 
-  // TODO: template
   render() {
     this._saveScrollTop();
     this.el.innerHTML = chatTemplate(this.data);
