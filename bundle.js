@@ -493,7 +493,7 @@ exports.default = Router;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _pageProto = __webpack_require__(1);
@@ -517,24 +517,23 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var ChatPage = function (_PageProto) {
-    _inherits(ChatPage, _PageProto);
+  _inherits(ChatPage, _PageProto);
 
-    function ChatPage(_ref) {
-        var el = _ref.el;
+  function ChatPage(_ref) {
+    var el = _ref.el;
 
-        _classCallCheck(this, ChatPage);
+    _classCallCheck(this, ChatPage);
 
-        var _this = _possibleConstructorReturn(this, (ChatPage.__proto__ || Object.getPrototypeOf(ChatPage)).call(this, { el: el }));
+    var _this = _possibleConstructorReturn(this, (ChatPage.__proto__ || Object.getPrototypeOf(ChatPage)).call(this, { el: el }));
 
-        _this.el.innerHTML = (0, _chatPageTmpl2.default)();
+    _this.el.innerHTML = (0, _chatPageTmpl2.default)();
 
-        _this.hide();
+    new _app2.default(_this.el).run();
+    _this.hide();
+    return _this;
+  }
 
-        new _app2.default(_this.el).run();
-        return _this;
-    }
-
-    return ChatPage;
+  return ChatPage;
 }(_pageProto2.default);
 
 exports.default = ChatPage;
@@ -758,10 +757,8 @@ var Chat = function () {
     this.data.messages = chatData.messages;
 
     this.render();
+    this.scrollToBottom();
   }
-
-  // TODO: template
-
 
   _createClass(Chat, [{
     key: 'render',
@@ -1024,19 +1021,22 @@ var _chatPage2 = _interopRequireDefault(_chatPage);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var appEl = document.querySelector('.app');
+var mainPageEl = document.createElement('div');
+var chatPageEl = document.createElement('div');
+
+appEl.appendChild(mainPageEl);
+appEl.appendChild(chatPageEl);
+
 var router = new _router2.default({
   el: appEl
 });
 
 var mainPage = new _mainPage2.default({
-  el: document.createElement('div')
+  el: mainPageEl
 });
 var chatPage = new _chatPage2.default({
-  el: document.createElement('div')
+  el: chatPageEl
 });
-
-appEl.appendChild(mainPage.getElement());
-appEl.appendChild(chatPage.getElement());
 
 router.register('/main', mainPage);
 router.register('/chat', chatPage);
@@ -1090,7 +1090,7 @@ module.exports = template;
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Ch2\u003E\u003C\u002Fh2\u003E\u003Clabel\u003E\u003Ca href=\"\u002Fmain\"\u003E" + (pug.escape(null == (pug_interp = 'Return to the menu') ? "" : pug_interp)) + "\u003C\u002Fa\u003E\u003C\u002Flabel\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Ch2\u003E\u003C\u002Fh2\u003E\u003Clabel\u003E\u003Ca class=\"chat__return\" href=\"\u002Fmain\"\u003E" + (pug.escape(null == (pug_interp = 'Return to the menu') ? "" : pug_interp)) + "\u003C\u002Fa\u003E\u003C\u002Flabel\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),
